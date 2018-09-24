@@ -57,27 +57,27 @@ class LinkedinMiddleware(MiddlewareMixin):
                 return redirect(self.authentication.authorization_url)
             else:
                 auth_code = url_data[1].split('&state=')[0]
-                self.get_resume_info(request, auth_code)
+                self.authentication.authorization_code = auth_code
+                request.session['auth_code'] = auth_code
+                linked_authentication = self.authentication.get_access_token()
+                logger.debug("We have the TOKEN : " + str(linked_authentication.access_token))
+                application = linkedin.LinkedInApplication(token=linked_authentication.access_token)
+                data = application.get_profile()
+                self.get_resume_info(request, data)
                 return redirect(request.resolver_match.url_name)  # To change to access other pages
         return self.get_response(request)
 
-    def get_resume_info(self, request, auth_code=None):
+    def get_resume_info(self, request, data):
         """
         Get full information from a resume and add theses information to the session cache
         :param auth_code: the authentication code needed to request the linkedinAPI
         :param request: the request
         :param application: the application filled with access token
         """
-        self.authentication.authorization_code = auth_code
-        request.session['auth_code'] = auth_code
-        linked_authentication = self.authentication.get_access_token()
-        logger.debug("We have the TOKEN : " + str(linked_authentication.access_token))
-        application = linkedin.LinkedInApplication(token=linked_authentication.access_token)
-        data = application.get_profile()
         logger.debug("resume Data : " + str(data))
-        request.session['firstName'] = data.get('firstName')
-        request.session['lastName'] = data.get('lastName')
-        request.session['headline'] = data.get('headline')
+        request.session['linkedin.firstName'] = data.get('firstName')
+        request.session['linkedin.lastName'] = data.get('lastName')
+        request.session['linkedin.headline'] = data.get('headline')
 
 
 def is_authorized_page(request):
