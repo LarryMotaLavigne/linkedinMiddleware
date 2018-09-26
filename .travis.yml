@@ -11,7 +11,7 @@ env:
 
 install:
   - pip install Django==$DJANGO_VERSION
-  - pip setup.py install
+  - python setup.py install
 
 script:
   - python -m unittest
