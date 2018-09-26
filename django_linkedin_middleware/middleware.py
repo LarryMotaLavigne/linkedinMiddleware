@@ -1,10 +1,8 @@
 import logging
 
-from django.core.management import CommandError
+from django.conf import settings
 from django.shortcuts import redirect
 from linkedin import linkedin
-
-from . import settings
 
 try:
     from django.utils.deprecation import MiddlewareMixin
@@ -28,9 +26,6 @@ class LinkedinMiddleware(MiddlewareMixin):
                                                               settings.LINKEDIN_APPLICATION_RETURN_CALLBACK,
                                                               settings.LINKEDIN_APPLICATION_PROFILE)
 
-        if not settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED:
-            raise CommandError('PAGES_WITH_LINKEDIN_AUTH_REQUIRED is not defined.')
-
     def __call__(self, request):
         """
         Process the middleware request
@@ -38,7 +33,7 @@ class LinkedinMiddleware(MiddlewareMixin):
         :return: response: the response
         """
         response = self.get_response(request)
-        if request.resolver_match is not None and self.is_authorized_page(request):
+        if request.resolver_match is not None and self.is_authorized_page(request.resolver_match.url_name):
             return self.process_linkedin_authentication(request)
         return response
 
@@ -81,7 +76,7 @@ class LinkedinMiddleware(MiddlewareMixin):
         request.session['linkedin.headline'] = data.get('headline')
 
     @staticmethod
-    def is_authorized_page(request):
+    def is_authorized_page(url_name):
         """
         Validate if the request page need an authentication
 
@@ -91,6 +86,6 @@ class LinkedinMiddleware(MiddlewareMixin):
         the global variable PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED in the settings config file.
         Return ``True`` for a authorized page, ``False`` otherwise.
         """
-        return request.resolver_match.url_name not in settings.PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED and (any(
+        return url_name not in settings.PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED and (any(
             pattern == '*' for pattern in settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED) or
-            request.resolver_match.url_name in settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED)
+            url_name in settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED)
