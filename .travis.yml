@@ -3,7 +3,6 @@ language: python
 python:
   - 3.5
   - 3.6
-  - 3.7
 
 env:
   - DJANGO_VERSION=2.0
@@ -12,7 +11,7 @@ env:
 
 install:
   - pip install Django==$DJANGO_VERSION
-  - pip install -e .[dev]
+  - pip setup.py install
 
 script:
   - python -m unittest
