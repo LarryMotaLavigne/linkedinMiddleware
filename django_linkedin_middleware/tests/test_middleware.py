@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 from django.test import override_settings
@@ -9,6 +10,7 @@ from django_linkedin_middleware.middleware import LinkedinMiddleware
 class MiddlewareTests(TestCase):
 
     def setUp(self):
+        os.environ['DJANGO_SETTINGS_MODULE'] = 'django_linkedin_middleware.tests.settings'
         self.request_mock = MagicMock()
         self.middleware = LinkedinMiddleware(self.request_mock)
 
