@@ -1,5 +1,6 @@
 # Django LinkedIn Middleware
 
+[![PyPI](https://img.shields.io/badge/pypi-v0.1.1-blue.svg)](https://pypi.org/project/django-linkedin-middleware/)
 [![Build Status](https://travis-ci.com/Squalex/LinkedinMiddleware.svg?branch=master)](https://travis-ci.com/Squalex/LinkedinMiddleware)
 
 Connect to the LinkedIn API.

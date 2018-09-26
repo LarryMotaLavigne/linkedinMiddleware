@@ -9,6 +9,7 @@ rm -dfr django_linkedin_middleware.egg-info
 python -m pip install --user --upgrade setuptools wheel
 python setup.py sdist bdist_wheel
 
-# Upload to Test-PyPI
+# Upload to Test-PyPI or PyPI (depending on the commented line)
 easy_install twine
 twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+#twine upload dist/*
