@@ -1,8 +1,11 @@
 # Django LinkedIn Middleware
 
+[![Build Status](https://travis-ci.com/Squalex/LinkedinMiddleware.svg?branch=master)](https://travis-ci.com/Squalex/LinkedinMiddleware)
+
 Connect to the LinkedIn API.
 
 ## Installation
+
 ```bash
 $ pip install django-linkedin-middleware
 ```
@@ -13,6 +16,7 @@ Just add `django-linkedin-middleware.middleware.LinkedinMiddleware` to your `MID
 
 
 ### Linkedin Configuration
+
 You need to create an application on the linkedin developer pages to 
 [https://www.linkedin.com/developer/apps](https://www.linkedin.com/developer/apps) to receive your credentials 
 

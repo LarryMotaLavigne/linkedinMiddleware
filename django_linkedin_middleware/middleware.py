@@ -21,6 +21,7 @@ class LinkedinMiddleware(MiddlewareMixin):
         Init the middleware with the response and the linkedin authentication object
         :param get_response: the middleware response
         """
+        super().__init__()
         self.get_response = get_response
         self.authentication = linkedin.LinkedInAuthentication(settings.LINKEDIN_APPLICATION_KEY,
                                                               settings.LINKEDIN_APPLICATION_SECRET,
@@ -28,7 +29,7 @@ class LinkedinMiddleware(MiddlewareMixin):
                                                               settings.LINKEDIN_APPLICATION_PROFILE)
 
         if not settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED:
-            raise CommandError('You must set settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED.')
+            raise CommandError('PAGES_WITH_LINKEDIN_AUTH_REQUIRED is not defined.')
 
     def __call__(self, request):
         """
@@ -37,7 +38,7 @@ class LinkedinMiddleware(MiddlewareMixin):
         :return: response: the response
         """
         response = self.get_response(request)
-        if request.resolver_match is not None and is_authorized_page(request):
+        if request.resolver_match is not None and self.is_authorized_page(request):
             return self.process_linkedin_authentication(request)
         return response
 
@@ -67,29 +68,29 @@ class LinkedinMiddleware(MiddlewareMixin):
                 return redirect(request.resolver_match.url_name)  # To change to access other pages
         return self.get_response(request)
 
-    def get_resume_info(self, request, data):
+    @staticmethod
+    def get_resume_info(request, data):
         """
         Get full information from a resume and add theses information to the session cache
-        :param auth_code: the authentication code needed to request the linkedinAPI
+        :param data: the authentication code needed to request the linkedinAPI
         :param request: the request
-        :param application: the application filled with access token
         """
         logger.debug("resume Data : " + str(data))
         request.session['linkedin.firstName'] = data.get('firstName')
         request.session['linkedin.lastName'] = data.get('lastName')
         request.session['linkedin.headline'] = data.get('headline')
 
+    @staticmethod
+    def is_authorized_page(request):
+        """
+        Validate if the request page need an authentication
 
-def is_authorized_page(request):
-    """
-    Validate if the request page need an authentication
-
-    Check if the page match the correct path to force a ask for a linkedin authentication
-    The pattern '*' can be use to force every request to redirect to linkedin for an authentication. This behavior can
-    be disable for specific pages by adding the pages to the PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED setting.
-    Return ``True`` for a authorized page, ``False`` otherwise.
-    """
-    return (any(pattern == '*' for pattern in settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED) and
-            request.resolver_match.url_name not in settings.PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED) or \
-           (request.resolver_match.url_name in settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED and
-            request.resolver_match.url_name not in settings.PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED)
+        Check if the page match the correct path to force a ask for a linkedin authentication
+        The pattern '*' can be use to force every request to redirect to linkedin for an authentication.
+        This behavior can be disable for specific pages by adding the pages to
+        the global variable PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED in the settings config file.
+        Return ``True`` for a authorized page, ``False`` otherwise.
+        """
+        return request.resolver_match.url_name not in settings.PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED and (any(
+            pattern == '*' for pattern in settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED) or
+            request.resolver_match.url_name in settings.PAGES_WITH_LINKEDIN_AUTH_REQUIRED)
