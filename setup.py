@@ -19,5 +19,5 @@ setup(
     author='Larry Mota--Lavigne',
     author_email='larry.motalavigne@gmail.com',
     url="https://github.com/Squalex/LinkedinMiddleware",
-    install_requires=['django']
+    install_requires=['django', 'linkedin', 'mock']
 )
