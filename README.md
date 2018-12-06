@@ -1,6 +1,6 @@
 # Django LinkedIn Middleware
 
-[![PyPI](https://img.shields.io/badge/pypi-v0.1.1-blue.svg)](https://pypi.org/project/django-linkedin-middleware/)
+[![PyPI](https://img.shields.io/badge/pypi-v0.1.2-blue.svg)](https://pypi.org/project/django-linkedin-middleware/)
 [![Build Status](https://travis-ci.com/Squalex/LinkedinMiddleware.svg?branch=master)](https://travis-ci.com/Squalex/LinkedinMiddleware)
 
 Connect to the LinkedIn API.
@@ -12,6 +12,15 @@ $ pip install django-linkedin-middleware
 ```
 
 Just add `django-linkedin-middleware.middleware.LinkedinMiddleware` to your `MIDDLEWARE`.
+
+## Usage
+
+In the request session will be found 3 differents label : 
+* `linkedin_firstName` for the user first name
+* `linkedin_lastName` for the user last name
+* `linkedin_headline` for the user headline
+
+In your HTML, you can directly add these label to display the data.
 
 ## Settings
 
@@ -35,6 +44,7 @@ You need to create an application on the linkedin developer pages to
 `PAGES_WITH_LINKEDIN_AUTH_REQUIRED` : the list of all pages on which you should force an authentication. By default, it will be all the pages (example : `['*']`)
 
 `PAGES_WITHOUT_LINKEDIN_AUTH_REQUIRED` : the list of all pages on which the authentication is disable.
+
 
 ## Thanks
 

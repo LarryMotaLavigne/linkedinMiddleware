@@ -71,9 +71,9 @@ class LinkedinMiddleware(MiddlewareMixin):
         :param request: the request
         """
         logger.debug("resume Data : " + str(data))
-        request.session['linkedin.firstName'] = data.get('firstName')
-        request.session['linkedin.lastName'] = data.get('lastName')
-        request.session['linkedin.headline'] = data.get('headline')
+        request.session['linkedin_firstName'] = data.get('firstName')
+        request.session['linkedin_lastName'] = data.get('lastName')
+        request.session['linkedin_headline'] = data.get('headline')
 
     @staticmethod
     def is_authorized_page(url_name):
